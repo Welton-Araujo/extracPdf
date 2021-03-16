@@ -4,6 +4,7 @@ Created on Wed Oct 28 10:22:01 2020
 
 @author: weltonaraujo
 """
+from tkinter import *
 
 import pdftotext
 
@@ -16,11 +17,11 @@ from nltk.corpus import stopwords
 
 from string import punctuation
 
+import glob
 
 base = ['Resultado', 'Eritrócitos', 'Hemoglobina', 'Hematócrito', 'V.C.M', 'H.C.M', 
         'C.H.C.M', 'RDW', 'Leucócitos', 'Mielócitos', 'Metamielócitos', 'Bastonetes', 
-        'Segmentados', 'Eosinófilos', 'Basófilos', 'Linfócitos', 'Monócitos', 'Contagem']
-
+        'Segmentados', 'Eosinófilos', 'Basófilos', 'Linfócitos', 'Monócitos', 'Plaquetas']
 
 
 def extractInfoPDF(path):
@@ -35,7 +36,7 @@ def phrases(pdf):
         phrasesPDF = txtPdf[i].split('\n')
         for j in range(len(phrasesPDF)):
             listPDF.append(phrasesPDF[j])
-    print(listPDF)
+    #print("Lista de PDF: \n" + listPDF)
 
     resultPharse(listPDF)
        
@@ -47,73 +48,51 @@ def resultPharse(pharsespdf):
             for x in base:
                 if(textoLinha[j] == x):
                     resultVet.append(textoLinha)
-    print(resultVet)
-    print(len(resultVet))
+    #print("resultVet: \n" + resultVet)
+    #print(len(resultVet))
     valueResult(resultVet)
     
 def valueResult(resultVet):
     for j in range(len(resultVet)):
-        print('------------------------')
+        counter = 0;
+        listaInd = []
         for i in range(len(resultVet[j])-1):
-            testeAqui = resultVet[j][i].replace(",", ".")
+            #print(resultVet)
+            altDec = resultVet[j][i].replace(",", ".")
             try:
-                print(type(testeAqui), ": ",float(testeAqui))
+                #print(type(altDec), ": ",float(altDec))
+                listaInd.append(float(altDec))
+                counter += 1
             except:
                 continue 
+        verificaInd(listaInd, counter, resultVet[j][0])
 
-pdfStr = extractInfoPDF("C:\\Users\\weltonaraujo\\Desktop\\pdf\\20202718122718.pdf")
+def verificaInd(lista, count, name):
+    if(count == 2):
+            if(lista[0] <= lista[1]):
+                print("O valor de(a) " + name +  " está dentro do padrão")
+            else:
+                print("O valor de(a) " + name +  " está fora do padrão")
+    if(count == 3):
+            if(lista[1] <= lista[0] <= lista[2]):
+                print("O valor de(a) " + name +  " está dentro do padrão")
+            else:
+                print("O valor de(a) " + name +  " está fora do padrão")
+    if(count == 4):
+            if((lista[0] == lista[2]) and (lista[1] == lista[3])):
+                print("O valor de(a) " + name +  " está dentro do padrão")
+            else:
+                print("O valor de(a) " + name +  " está fora do padrão")
+    if(count == 6):
+            if((lista[2] <= lista[0] <= lista[3]) and (lista[4] <= lista[1] <= lista[5])):
+                print("O valor de(a) " + name +  " está dentro do padrão")
+            else:
+                print("O valor de(a) " + name +  " está fora do padrão")
 
-phrases(pdfStr)
+for x in glob.glob("C:\\Users\\weltonaraujo\\Desktop\\pdf\\*.pdf"):
+    print("----------------------------------------")
+    pdfStr = extractInfoPDF(x)
+    phrases(pdfStr)
+    print("----------------------------------------")
 
 
-
-
-
-
-for i in range(len(resultVet[1])-1):
-    testeAqui = resultVet[1][i].replace(",", ".")
-    try:
-        print(type(testeAqui), ": ",float(testeAqui))
-    except:
-        continue
-
-var1='2112'
-print( type(var1) )
-var2 = int(var1)
-print( type(var2) )
-teste = resultVet[0][2].replace(",", ".")
-print(type(float(teste)))
-
-'''           
-print(len(resultVet))  
-print(resultVet)
-print(resultVet[0][2])
-
-resultado = []
-for i in range(len(resultVet)):
-    tam = len(resultVet[i])
-    for j in range(tam):
-        if(resultVet[i][j] == ":"):
-            resultado.append(resultVet[i][j+1])
-print(resultado)
-
-for page in pdf:
-    print(page)
-      
-with open('C:\\Users\\weltonaraujo\\Desktop\\pdf\\ResultadoCreatinina.txt', 'w') as f:
-    f.write("\n\n".join(pdf))
-    
-pdfTxt = open('C:\\Users\\weltonaraujo\\Desktop\\pdf\\ResultadoCreatinina.txt')
-print(type(pdfTxt))
-linhas = pdfTxt.readlines()
-totalLinhas = len(linhas)
-#print(linhas)
-#print(len(linhas))
-print(len(linhas))'''
-
-for i in range(totalLinhas-1):
-    textoLinha = word_tokenize(linhas[i], "portuguese")
-    for j in range(len(textoLinha)-1):
-        if(textoLinha[j] == "Resultado"):
-            print(textoLinha)
-    
